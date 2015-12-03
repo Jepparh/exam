@@ -1,0 +1,208 @@
+
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(13, OUTPUT);
+  pinMode(8, INPUT_PULLUP);
+  Serial.println("Velkommen til reaktionstidstesten - Indtast venligst navn. ");
+}
+
+unsigned long tid1, tid2, tid3[5];
+int samlettid;
+char bogstav;
+char spiller[50];
+int index = 0;
+int nyindex[5];
+int k;
+int counter = 0;
+int taeller = 0;
+int antal = 0;
+char kommando;
+int faceCount = 0;
+char getCommand()
+{
+  char a, b  = 0;
+  while (1) {
+    if ( ! Serial.available() )
+      continue;
+    a = b;
+    b = Serial.read();
+    if (b == 10)
+      return (a);
+  }
+}
+
+
+
+
+
+struct info {
+  char navnOne[10];
+  char navnTwo[10];
+  char navnThree[10];
+  char navnFour[10];
+  char navnFive[10];
+  int tidOne;
+  int tidTwo;
+  int tidThree;
+  int tidFour;
+  int tidFive;
+
+} infos;
+
+
+
+void nyspiller() {
+
+  while (!Serial.available()) {}
+
+  if (Serial.available()) {
+
+    bogstav = Serial.read();
+
+    if (counter == 0) {
+      infos.navnOne[index] = bogstav;
+      index++;
+
+    }
+    if (counter == 1) {
+      infos.navnTwo[index] = bogstav;
+      index++;
+
+    }
+    if (counter == 2) {
+      infos.navnThree[index] = bogstav;
+      index++;
+
+    }
+    if (counter == 3) {
+      infos.navnFour[index] = bogstav;
+      index++;
+
+    }
+    if (counter == 4) {
+      infos.navnFive[index] = bogstav;
+      index++;
+
+
+    }
+    /*Serial.println("index");
+    Serial.println(index);
+    Serial.println("antal");
+    Serial.println(antal);
+    Serial.println("counter");
+    Serial.println(counter);
+    */
+  }
+  if (bogstav == 10) {
+    counter++;
+    antal++;
+    index == 0;
+    Serial.println("Reaktionstest starter om 3 sekunder");
+    Serial.print(counter);
+    delay(1000);
+    Serial.println("3");
+    delay(1000);
+    Serial.println("2");
+    delay(1000);
+    Serial.println("1");
+    //reaktionstest();
+    if (antal == 5 ) {
+      Serial.println(" Velkommen til                               I   N   T   E   R   F   A   C   E"); Serial.println("Tryk a for spiller 1 score, z for spiller 2, l for spiller 3, b for spiller 4, og q for spiller 5");
+      if (!Serial.available()) {}
+      while (1) {
+        kommando = getCommand();
+        switch (kommando) {
+          case 'a': Serial.println(infos.navnOne); Serial.println(infos.tidOne); Serial.print("a");
+            break;
+          case 'z': Serial.println(infos.navnTwo); Serial.println(infos.tidTwo); Serial.print("b");
+            break;
+          case 'l': Serial.println(infos.navnThree); Serial.println(infos.tidThree); Serial.print("c");
+            break;
+          case 'b': Serial.println(infos.navnFour); Serial.println(infos.tidFour); Serial.print("d");
+            break;
+          case 'q': Serial.println(infos.navnFive); Serial.println(infos.tidFive); Serial.print("e");
+            break;
+          default:;
+        }
+      }
+
+    }
+
+
+  }
+}
+void reaktionstest() {
+  for (int i = 0; i <= 4; i++) {
+    delay(random(1000, 3000));
+    digitalWrite(13, HIGH);
+    tid1 = millis();
+
+    while (digitalRead(8) == HIGH) {}
+    tid2 = millis();
+    digitalRead(8) == LOW;
+    digitalWrite(13, LOW);
+    tid3[i] = tid2 - tid1;
+    samlettid += tid3[i];
+    Serial.print("Din reaktionstid: ");
+    Serial.println(tid3[i]);
+
+    if ( i == 4 ) {
+      Serial.print("Du har nu foretaget 5 reaktionstest, gennemsnits tiden blev: ");
+      Serial.println(samlettid / 5);
+
+      if (taeller == 0) {
+        infos.tidOne = samlettid / 5;
+        taeller = 1;
+        Serial.println(" Spiller 1 er faerdig. indtast ny spillers navn!");
+
+      }
+      if (taeller == 1) {
+        infos.tidTwo = samlettid / 5;
+        taeller == 2;
+        Serial.println(" Spiller 2 er faerdig. indtast ny spillers navn!");
+      }
+      if (taeller == 2) {
+        infos.tidThree = samlettid / 5;
+        taeller == 3;
+        Serial.println(" Spiller 3 er faerdig. indtast ny spillers navn!");
+      }
+      if (taeller == 3) {
+        infos.tidFour = samlettid / 5;
+        taeller == 4;
+        Serial.println(" Spiller 4 er faerdig. indtast ny spillers navn!");
+      }
+      if (taeller == 4) {
+        infos.tidFive = samlettid / 5;
+
+      }
+
+    }
+  }
+}
+
+
+
+
+void loop() {
+  nyspiller();
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
